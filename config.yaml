@@ -1,0 +1,42 @@
+# config.yaml
+# CSV-based pipeline: drop a raw gnomAD browser CSV export at
+#   input/{gene}.{version}.csv   (e.g. input/PALB2.v4.1.csv)
+# and run `snakemake --cores 4`.
+
+gnomad_versions:
+  - v2.1.1
+  - v4.1
+
+# Per-version genome build (drives ANNOVAR -buildver: GRCh38->hg38, GRCh37->hg19)
+gnomad:
+  v4.1:
+    build: GRCh38
+  v2.1.1:
+    build: GRCh37
+
+genes:
+  # Per gene, set the penultimate-exon exclusion cutoff as a cDNA (c.) position
+  # from Alamut (the last 50bp of the penultimate exon, MANE Select transcript).
+  # Null variants with c.position > cutoff are excluded (NMD escape).
+  # Omit exon_cutoff (or set to null) to disable exclusion for a gene.
+  PALB2:
+    exon_cutoff: 3300      # NM_024675.4, penultimate exon 12 (c.3202-c.3350)
+  ENG:
+    exon_cutoff: 1802      # NM_001114753.3, penultimate exon 15 (c.1742-c.1852)
+  ACVRL1:
+    exon_cutoff: 1327      # NM_000020.3, penultimate exon 9 (c.1247-c.1377)
+
+# Missense classification thresholds (shared across all genes). A missense
+# variant is predicted pathogenic when it meets ALL of these. Change here to
+# retune - no script edits needed.
+missense_thresholds:
+  max_allele_count: 5      # Allele Count <= this
+  polyphen_hvar_min: 0.95  # Polyphen2_HVAR > this
+  sift_max: 0.05           # SIFT < this
+  gerp_nr_min: 3           # GERP++_NR >= this
+
+# Tool paths (Windows-side installs, reached via /mnt/c from WSL)
+tools:
+  annovar_dir: /mnt/c/Users/user/Desktop/Annovar/annovar
+  humandb_dir: /mnt/c/Users/user/Desktop/Annovar/annovar/humandb
+  intervar_dir: /mnt/c/Users/user/Desktop/InterVar-2.2.1/InterVar-2.2.1
