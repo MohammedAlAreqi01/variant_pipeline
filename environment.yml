@@ -1,0 +1,18 @@
+name: snakemake
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python>=3.10
+  - snakemake-minimal>=8
+  - htslib>=1.19      # provides tabix / bgzip (needs a recent build)
+  - bcftools>=1.19
+  # classify.py / merge_annotations.py / summarize.py use only the Python
+  # standard library (csv, re, argparse), so no extra Python packages are
+  # required here.
+  #
+  # NOT installable via conda - install these separately and point config.yaml
+  # at them (see README):
+  #   - ANNOVAR   (register + download; plus humandb: refGene, dbnsfp42a,
+  #                clinvar_20250721)
+  #   - InterVar  (git clone; edit its config.ini to point at ANNOVAR)
